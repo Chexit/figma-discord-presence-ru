@@ -20,51 +20,64 @@ class CustomTray extends EventEmitter {
   baseMenuTemplate = [
     { type: "separator" },
     {
-      label: "Options",
+      label: "Настройки",
       submenu: [
         {
-          label: "Hide filenames",
+          label: "Скрывать названия файлов",
           type: "checkbox",
           checked: config.get("hideFilenames"),
           click: (menuItem) =>
             this.saveConfigAndUpdate("hideFilenames", menuItem.checked),
         },
         {
-          label: "Hide active/idle status",
+          label: "Скрывать статус: Сидит/Работает",
           type: "checkbox",
           checked: config.get("hideStatus"),
           click: (menuItem) =>
             this.saveConfigAndUpdate("hideStatus", menuItem.checked),
         },
         {
-          label: 'Hide "View in Figma" button',
+          label: 'Скрывать кнопку присоедениться',
           type: "checkbox",
           checked: config.get("hideViewButton"),
           click: (menuItem) =>
             this.saveConfigAndUpdate("hideViewButton", menuItem.checked),
         },
-        // {
-        //   label: "Connect to Discord when this app starts",
-        //   type: "checkbox",
-        //   checked: config.get("connectOnStartup"),
-        //   click: (menuItem) =>
-        //     this.saveConfigAndUpdate("connectOnStartup", menuItem.checked),
-        // },
+        {
+          label: "Подключаться к Discord когда это приложение запускается ",
+          enabled: false,
+          type: "checkbox",
+          checked: config.get("connectOnStartup"),
+          click: (menuItem) =>
+            this.saveConfigAndUpdate("connectOnStartup", menuItem.checked),
+         },
+      //   {
+       //   label: "Автоматическая проверка обновлений",
+        //  type: "checkbox",
+         // checked: config.get("autoCheckForUpdates"),
+         // click: (menuItem) =>
+          //  this.saveConfigAndUpdate("autoCheckForUpdates", menuItem.checked),
+       // },
       ],
     },
 
     { type: "separator" },
     {
-      label: "Check for Updates...",
-      click: () => this.emit(events.CHECK_FOR_UPDATES),
+      label: "Проверить на обновления",
+      enabled: false,
+      click: () => dialog.showMessageBox({
+        type: "question",
+        title: "Информация об обновлениях",
+        message: `На данный момент эта функция не работает.`,
+      })
     },
     {
-      label: "Show Config",
+      label: "Показать конфиг",
       click: () => shell.openPath(util.getAppDataPath()),
     },
     { type: "separator" },
     {
-      label: "Exit",
+      label: "Выйти",
       click: () => this.emit(events.QUIT),
     },
   ];
@@ -83,13 +96,13 @@ class CustomTray extends EventEmitter {
   }
 
   getIconPath() {
-    const iconState = this.state.isDiscordReady ? "On" : "Off";
+    const iconState = this.state.isDiscordReady ? "Включить" : "Выключить";
 
     if (process.platform === "darwin") {
-      return path.join(__dirname, `/../../assets/Icon${iconState}Template.png`);
+      return path.join(__dirname, `/../../assets/IconOffTemplate.png`);
     } else if (process.platform === "win32") {
       // always use the darkmode icon on windows, taskbar seems to be dark regardless of theme
-      return path.join(__dirname, `/../../assets/Icon${iconState}Windows.png`);
+      return path.join(__dirname, `/../../assets/IconOffWindows.png`);
     }
   }
 
@@ -99,13 +112,13 @@ class CustomTray extends EventEmitter {
     if (this.state.isDiscordReady) {
       menuTemplate = [
         {
-          label: `Connected to Discord`,
+          label: `Подключено к Discord`,
           enabled: false,
           icon: iconOn,
         },
         { type: "separator" },
         {
-          label: "Disconnect from Discord",
+          label: "Отключиться к Discord",
           click: () => this.emit(events.DISCONNECT),
         },
       ].concat(this.baseMenuTemplate);
@@ -113,26 +126,26 @@ class CustomTray extends EventEmitter {
       if (this.state.isDiscordConnecting) {
         menuTemplate = [
           {
-            label: "Connecting to Discord",
+            label: "Подключаюсь Discord",
             enabled: false,
             icon: iconOff,
           },
           { type: "separator" },
           {
-            label: "Stop connecting to Discord",
+            label: "Остановить подключение к Discord",
             click: () => this.emit(events.DISCONNECT),
           },
         ].concat(this.baseMenuTemplate);
       } else {
         menuTemplate = [
           {
-            label: "Not connected to Discord",
+            label: "Не подключено к Discord",
             enabled: false,
             icon: iconOff,
           },
           { type: "separator" },
           {
-            label: "Connect to Discord",
+            label: "Подключиться к Discord",
             click: () => this.emit(events.CONNECT),
           },
         ].concat(this.baseMenuTemplate);
@@ -148,7 +161,7 @@ class CustomTray extends EventEmitter {
     config.save();
 
     // immeditely try a discord activity update
-    this.emit(events.UPDATE_OPTIONS);
+    this.emit(events.UPDATE_OPTIONS, configKey);
   }
 
   setState(state) {

@@ -9,8 +9,9 @@ const logger = require("./lib/logger");
 const CustomTray = require("./lib/tray");
 const Activity = require("./lib/activity");
 
+
 const { app } = electron;
-let tray, activity;
+let tray, activity, updateCheckInterval;
 
 const state = {
   isDiscordConnecting: false,
@@ -33,7 +34,6 @@ if (process.platform === "darwin") app.dock.hide();
 
 app
   .whenReady()
-  .then(() => updater.update())
   .then(() => config.save(0, true))
   .then(() => config.load())
   .then(() => (tray = new CustomTray(state)))
@@ -41,11 +41,12 @@ app
   .then(() => registerEvents())
   .then(() => logger.debug("main", "initalized!"))
   .catch((err) => logger.error("main", err.message));
+  
 
 function registerEvents() {
   tray.on(events.QUIT, async () => await quit());
 
-  tray.on(events.UPDATE_OPTIONS, async () => {
+  tray.on(events.UPDATE_OPTIONS, async () => {  
     await activity.updateOptions();
   });
 

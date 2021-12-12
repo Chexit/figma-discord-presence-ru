@@ -8,25 +8,30 @@ const retries = 10;
 
 const conf = convict({
   hideFilenames: {
-    doc: "Show or hide filenames",
+    doc: "Скрывать названия файлов",
     default: false,
     format: "Boolean",
   },
   hideStatus: {
-    doc: "Show or hide active/idle status",
+    doc: "Скрывать статус: Сидит/Работает",
     default: false,
     format: "Boolean",
   },
   hideViewButton: {
-    doc: "Show or hide the view in figma button",
+    doc: "Скрывать кнопку присоедениться",
     default: true,
     format: "Boolean",
   },
-  // connectOnStartup: {
-  //   doc: "Connect to Discord on application startup",
-  //   default: true,
-  //   format: "Boolean",
-  // },
+  autoCheckForUpdates: {
+    doc: "Periodically check for updates",
+    default: true,
+    format: "Boolean",
+  },
+   connectOnStartup: {
+     doc: "Connect to Discord on application startup",
+     default: true,
+     format: "Boolean",
+   },
 });
 
 function load() {

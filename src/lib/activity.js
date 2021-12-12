@@ -80,9 +80,9 @@ class Activity extends EventEmitter {
 
       // Build detail string
       const details = [
-        !isHideStatus ? (isFigmaActive ? "Active" : "Idle") : "",
+        !isHideStatus ? (isFigmaActive ? "Работает" : "Сидит") : "",
         `${!isHideStatus && !isHideFilenames ? " " : ""}`,
-        !isHideFilenames ? `in: "${currentFigmaFilename}"` : undefined,
+        !isHideFilenames ? `в ${currentFigmaFilename}` : undefined,
       ];
 
       // You'll need to have the logo asset uploaded to
@@ -91,10 +91,10 @@ class Activity extends EventEmitter {
         details: details.join("") || undefined,
         startTimestamp: this.startTime,
         largeImageKey: "logo",
-        largeImageText: "Designing in Figma",
+        largeImageText: "Работает в Figma",
         buttons:
           !isHideViewButton && shareLink
-            ? [{ label: "View in Figma", url: shareLink }]
+            ? [{ label: "Посмотреть в Figma", url: shareLink }]
             : undefined,
         instance: false,
       });

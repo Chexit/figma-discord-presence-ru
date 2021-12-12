@@ -92,3 +92,4 @@ While I am a Discord employee, this is by no way endorsed as an "official" integ
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+# figma-discord-presence-ru
